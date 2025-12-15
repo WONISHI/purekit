@@ -21,12 +21,12 @@ export function createConfig(options = {}) {
       {
         file: `${dist}/index.js`,
         format: "cjs",
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         file: `${dist}/index.mjs`,
         format: "es",
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     // 自动将 package.json 中的依赖排除，防止打包进去
