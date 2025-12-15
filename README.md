@@ -1,7 +1,7 @@
 # Corekit
 一个轻量、高性能、零依赖的 TypeScript DOM 工具库。包含 防篡改水印 和 高性能滚动焦点检测 两个核心模块。
 
-##✨ 特性 (Features)
+## ✨ 特性 (Features)
 ### 🛡️ Watermark (水印)
 零侵入布局：不强制修改父容器 position，智能使用 contain: paint 锁定水印，兼容性与安全性并存。
 
