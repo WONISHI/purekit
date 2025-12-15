@@ -29,14 +29,13 @@ export const baseConfig = {
     }),
     terser({
       format: {
-        // 移除所有注释 (包括 /**! ... */ 这种版权注释也移除)
+        // 移除所有注释
         comments: false,
       },
       compress: {
-        // (可选) 移除所有 console.log，生产环境建议开启
-        drop_console: true,
-        // (可选) 移除 debugger
+        drop_console: false,
         drop_debugger: true,
+        pure_funcs: ['console.log','console.info','console.debug'], 
       },
     }),
   ],

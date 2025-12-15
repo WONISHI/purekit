@@ -1,12 +1,13 @@
 {
-  "name": "@corekit/watermark.js",
+  "name": "@corekit/watermark",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c rollup.config.mjs"
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs -w"
   },
   "keywords": [],
   "author": "",
