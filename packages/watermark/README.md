@@ -13,7 +13,7 @@ yarn add @purekit/watermark
 基础用法
 
 ```typescript
-import watermark from 'my-ui-utils/watermark';
+import watermark from '@purekit/watermark';
 
 // 方式 A: 最简单（默认挂载到 body）
 watermark.apply("机密文件");
