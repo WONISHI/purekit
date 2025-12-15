@@ -1,5 +1,11 @@
 # @purekit/watermark
 
+## 1.1.1
+
+### Patch Changes
+
+- chore:新增 readme 文档
+
 ## 1.1.0
 
 ### Minor Changes
