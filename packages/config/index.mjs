@@ -1,9 +1,8 @@
-// packages/rollup-config/index.mjs
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import terser from '@rollup/plugin-terser';
-import dts from "rollup-plugin-dts"; // 记得 pnpm add -D -w rollup-plugin-dts
+import dts from "rollup-plugin-dts";
 
 /**
  * 创建 Rollup 配置
@@ -30,7 +29,6 @@ export function createConfig(options = {}) {
   let finalOutput = options.output || defaultOutput;
 
   // 3. 【关键】强制处理 sourcemap: false
-  // 无论用户传了什么，都统一遍历一遍，把 sourcemap 关掉
   if (!Array.isArray(finalOutput)) {
     finalOutput = [finalOutput];
   }
