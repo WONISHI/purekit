@@ -79,12 +79,13 @@ export class LayoutEngine {
       };
     } else if (node.type === 'group') {
       const measuredItems = node.items.map((item) => this.measure(ctx, item, globalOptions, ratio));
-      const gap = (node.gap || 0) * ratio;
+      const gap = (node.gap || 0) * ratio; // 像素比
       let totalW = 0,
         totalH = 0;
-
       if (node.layout === 'row') {
+        // 两个方格只有一个gap
         totalW = measuredItems.reduce((acc, item) => acc + item._renderWidth, 0) + (measuredItems.length - 1) * gap;
+        // 取渲染的最大高
         totalH = Math.max(...measuredItems.map((i) => i._renderHeight));
       } else {
         totalW = Math.max(...measuredItems.map((i) => i._renderWidth));
@@ -100,7 +101,6 @@ export class LayoutEngine {
       } as MeasuredGroup;
     }
 
-    // Fix: 防止 never 类型报错
     return { ...(node as any), _renderWidth: 0, _renderHeight: 0 };
   }
 }

@@ -69,8 +69,8 @@ class Watermark {
     // 预先加载图片
     await LayoutEngine.preload(rootContent);
     const tempCtx = document.createElement('canvas').getContext('2d')!;
+    // 计算渲染的宽高
     const layoutTree = LayoutEngine.measure(tempCtx, rootContent, this.options, ratio);
-    console.log(tempCtx, rootContent, this.options, ratio, layoutTree);
 
     // 3. 生成图片
     const { base64, size } = await CanvasDrawer.generate(layoutTree, this.options, ratio);
