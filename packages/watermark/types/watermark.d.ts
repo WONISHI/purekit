@@ -1,36 +1,40 @@
-export interface WatermarkContentText {
-  /** 文本内容，支持 \n 换行 */
+export type LayoutMode = 'row' | 'column'; // 对应截图的 "水平方向" | "竖直方向"
+
+export interface BaseContent {
+  rotate?: number; // 单独旋转角度
+}
+
+export interface WatermarkText extends BaseContent {
+  type: 'text';
   text: string;
   fontSize?: number;
   fontWeight?: string | number;
   fontFamily?: string;
   fontColor?: string;
-  /** 与下一个元素的间隙。0 表示不换行，>0 表示换行并留出间距 */
-  rowGap?: number;
-  /** 单独旋转角度 */
-  rotate?: number;
 }
 
-export interface WatermarkContentImage {
-  /** 图片地址 */
+export interface WatermarkImage extends BaseContent {
+  type: 'image';
   image: string;
-  width?: number;
-  height?: number;
-  /** 单独旋转角度 */
-  rotate?: number;
-  /** 与下一个元素的间隙。0 表示不换行，>0 表示换行并留出间距 */
-  rowGap?: number;
+  width?: number;  // 图片必须指定宽
+  height?: number; // 图片必须指定高
 }
 
-export type WatermarkContentItem = WatermarkContentText | WatermarkContentImage;
+export interface WatermarkGroup extends BaseContent {
+  type: 'group';
+  layout: LayoutMode;
+  gap?: number; // 对应截图的 layoutGap
+  items: WatermarkContent[]; // 对应截图的 colCotext
+}
 
+export type WatermarkContent = WatermarkText | WatermarkImage | WatermarkGroup;
+
+// 更新 Options
 export interface WatermarkOptions {
-  /** 挂载容器 */
+    /** 挂载容器 */
   el?: string | HTMLElement;
   /** 水印 ID */
   id?: string;
-  /** 复合内容配置：支持纯字符串或复合数组 */
-  content?: string | WatermarkContentItem[];
   fontSize?: number;
   fontWeight?: string | number;
   fontFamily?: string;
@@ -46,10 +50,5 @@ export interface WatermarkOptions {
   gap?: number | [number, number];
   /** 单点偏移 [x, y] */
   offset?: number | [number, number];
+  content?: string | WatermarkContent; 
 }
-
-export type InternalOptions = Required<Omit<WatermarkOptions, "el" | "content">> & {
-  el?: string | HTMLElement;
-  content: string | WatermarkContentItem[];
-};
-
