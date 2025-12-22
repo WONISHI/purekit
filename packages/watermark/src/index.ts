@@ -7,7 +7,6 @@ import type {
 } from "../types/watermark";
 
 class Watermark {
-  // ... (原有属性保持不变: container, options 等)
   private options: any = {
     id: "watermark-layer",
     content: "内部资料",
@@ -107,7 +106,6 @@ class Watermark {
 
     // 情况 2: 已是对象
     if (content.type === "text") {
-      console.log(content);
       return this._normalizeText(content.text, content);
     } else if (content.type === "group") {
       // 递归处理子元素
@@ -309,7 +307,9 @@ class Watermark {
       opts = arg1;
     }
 
+    // 把opts设置到this.options上面去
     this._updateOptions(opts);
+    // 获取覆盖的元素
     this.container = this._resolveContainer(opts.el || this.options.el);
 
     // 关键：确保容器能撑起 absolute 的水印
@@ -445,8 +445,6 @@ class Watermark {
       this.container.style.position = "relative";
     }
   }
-
-  // ... (apply, render, _loadImage, 监控逻辑 等代码与原版相同，此处省略) ...
 }
 
 // 内部使用的类型，包含计算后的尺寸
