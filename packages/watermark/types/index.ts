@@ -38,7 +38,7 @@ export interface WatermarkCanvasDrawerRusult {
 export interface WatermarkOptions {
   id?: string;
   el?: string | HTMLElement;
-  content?: string | WatermarkContent;
+  content?: string | string[] | WatermarkContent;
   fontSize?: number;
   fontWeight?: string | number;
   fontFamily?: string;

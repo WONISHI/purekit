@@ -1,118 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="./packages/watermark/dist/index.umd.js"></script>
-    <title>Document</title>
-    <script type="module">
-      // import watermark from "./packages/watermark/dist/index.mjs";
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="./packages/watermark/dist/index.umd.js"></script>
+  <title>Document</title>
+  <script type="module">
+    // import watermark from "./packages/watermark/dist/index.mjs";
 
-      // 此时 document.body 还是 null
-      console.log('Current Body:', window, document.body);
-
-      // 调用 apply
-      const vm = Watermark.apply({
-        el: '#app',
-        layout: 'rb',
-        content: {
-          type: 'group',
-          layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
-          gap: 15, // 对应截图 layoutGap
-          items: [
-            // 左侧图片
-            {
-              type: 'text',
-              text: '内部绝密资料',
-              fontSize: 12,
-              fontColor: 'red',
-            },
-            // 右侧文字组 (自动处理换行)
-            {
-              type: 'group',
-              layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
-              gap: 5,
-              items: [
-                {
-                  type: 'image',
-                  image: 'https://picsum.photos/40/40',
-                  width: 20,
-                  height: 20,
-                },
-                {
-                  type: 'text',
-                  text: '严禁外传\n2023-10-01', // 这里会自动再次拆分为两行
-                  fontSize: 12,
-                  fontColor: '#999',
-                },
-              ],
-            },
-          ],
-        },
-      });
-      // Watermark.apply(["111", "222"]);
-      const content = [
-        {
-          text: '111',
-          fontSize: '',
-          fontWeight: '',
-          fontFamily: '',
-          fontColor: '',
-          rowGap: 10,
-          rotate: 10,
-        },
-        {
-          image: '',
-          rotate: 10,
-          width: 10,
-          height: 10,
-          objectFit: '',
-          rowGap: 10,
-        },
-      ];
-      // Watermark.options = 2222;
-      console.log();
-      // vm.download();
-      // console.log("vm", vm);
-    </script>
-    <script src="https://slow-server.com/very-large-script.js"></script>
-    <script type="module">
-      // 假设这是没有 if (document.readyState...) 判断的代码
-      const container = document.body || document.documentElement;
-      const div = document.createElement('div');
-      // 如果你在 apply 里强制要求 container 必须是 body
-      // 此时 document.body 是 null，逻辑会立即崩掉或挂载到 html 上导致样式错乱
-      container.appendChild(div);
-    </script>
-  </head>
-  <body>
-    <div id="app" style="width: 300px; height: 400px">
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-      <button class="trigger-click">nihaonihao</button>
-    </div>
-    <!-- <script>
-      const vm = Watermark.apply({
-        text:`nihaonihao\n111`,
-        el:'#app',
-        layout:'rt'
-      });
-      console.log("vm", vm, Watermark);
-    </script> -->
-  </body>
+    // 此时 document.body 还是 null
+    console.log('Current Body:', window, document.body);
+    // Watermark.apply(['11','2322'])
+    //上面调用类似下面的调用方式
+    // Watermark.apply({
+    //   fontSize:24,
+    //   fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    //   fontColor:'rgba(0,0,0,1)',
+    //   content: {
+    //     type: 'group',
+    //     layout: 'column',
+    //     items: [{
+    //       type: 'text',
+    //       text: '11',
+    //     }, {
+    //       type: 'text',
+    //       text: '2322'
+    //     }]
+    //   }
+    // })
+    // 调用 apply
+    const vm = Watermark.apply({
+      el: '#app',
+      layout: 'rb',
+      content: {
+        type: 'group',
+        layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
+        gap: 15, // 对应截图 layoutGap
+        items: [
+          // 左侧图片
+          {
+            type: 'text',
+            text: '内部绝密资料',
+            fontSize: 12,
+            fontColor: 'red',
+          },
+          // 右侧文字组 (自动处理换行)
+          {
+            type: 'group',
+            layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
+            gap: 5,
+            items: [
+              {
+                type: 'image',
+                image: 'https://picsum.photos/40/40',
+                width: 20,
+                height: 20,
+              },
+              {
+                type: 'text',
+                text: '严禁外传\n2023-10-01', // 这里会自动再次拆分为两行
+                fontSize: 12,
+                fontColor: '#999',
+              },
+            ],
+          },
+        ],
+      },
+    });
+    //上面的调用方式泪水下面这种
+    // const vm = Watermark.apply({
+    //   el: '#app',
+    //   layout: 'rb',
+    //   content: {
+    //     type: 'group',
+    //     layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
+    //     gap: 15, // 对应截图 layoutGap
+    //     items: [
+    //       // 左侧图片
+    //       {
+    //         type: 'text',
+    //         text: '内部绝密资料',
+    //         fontSize: 12,
+    //         fontColor: 'red',
+    //       },
+    //       // 右侧文字组 (自动处理换行)
+    //       {
+    //         type: 'group',
+    //         layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
+    //         gap: 5, //复用这层
+    //         items: [
+    //           {
+    //             type: 'image',
+    //             image: 'https://picsum.photos/40/40',
+    //             width: 20,
+    //             height: 20,
+    //           },
+    //           {
+    //             type: 'group',
+    //             layout: 'column',
+    //             gap: 5, //这个复用上一层的gap
+    //             items: [
+    //               {
+    //                 type: 'text',
+    //                 text: '严禁外传2023-10-01', // 这里会自动再次拆分为两行
+    //                 fontSize: 12,
+    //                 fontColor: '#999',
+    //               },
+    //               {
+    //                 type: 'text',
+    //                 text: '2023-10-01', // 这里会自动再次拆分为两行
+    //                 fontSize: 12,
+    //                 fontColor: '#999',
+    //               },
+    //             ],
+    //           }
+    //         ],
+    //       },
+    //     ],
+    //   },
+    // });
+    // Watermark.apply(["111", "222"]);
+    // vm.download();
+    // console.log("vm", vm);
+  </script>
+  <script src="https://slow-server.com/very-large-script.js"></script>
+  <script type="module">
+    // 假设这是没有 if (document.readyState...) 判断的代码
+    const container = document.body || document.documentElement;
+    const div = document.createElement('div');
+    // 如果你在 apply 里强制要求 container 必须是 body
+    // 此时 document.body 是 null，逻辑会立即崩掉或挂载到 html 上导致样式错乱
+    container.appendChild(div);
+  </script>
+</head>
+<body>
+<div id="app" style="width: 300px; height: 400px">
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+  <button class="trigger-click">nihaonihao</button>
+</div>
+<!-- <script>
+  const vm = Watermark.apply({
+    text:`nihaonihao\n111`,
+    el:'#app',
+    layout:'rt'
+  });
+  console.log("vm", vm, Watermark);
+</script> -->
+</body>
 </html>

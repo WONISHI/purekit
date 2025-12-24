@@ -25,17 +25,26 @@ class Watermark {
 
   /**
    * 初始化/应用水印
+   * 修改点：arg1 类型增加 string[]
    */
-  public apply(arg1?: string | WatermarkOptions, arg2?: HTMLElement | string): this {
+  public apply(arg1?: string | string[] | WatermarkOptions, arg2?: HTMLElement | string): this {
     if (document.readyState === 'loading' && !document.body) {
+      // @ts-ignore: 参数透传
       document.addEventListener('DOMContentLoaded', () => this.apply(arg1, arg2));
       return this;
     }
 
     let opts: WatermarkOptions = {};
-    if (typeof arg1 === 'string') {
-      opts.content = arg1;
-      if (arg2) opts.el = arg2;
+
+    // -----------------------------------------------------------
+    // 新增逻辑：处理数组简写 Watermark.apply(['Line1', 'Line2'])
+    // -----------------------------------------------------------
+    if (typeof arg1 === 'string' || Array.isArray(arg1)) {
+      // 无论是字符串还是数组，都直接赋值给 content
+      // 类型系统如果报错，需要将 WatermarkOptions['content'] 类型扩充为 string | string[] | WatermarkContent
+      opts.content = arg1 as any;
+
+      if (arg2) opts.el = arg2 as string | HTMLElement;
     } else if (typeof arg1 === 'object') {
       opts = arg1;
     }
@@ -49,8 +58,6 @@ class Watermark {
     this.container = resolveContainer(this.options.el);
     this._ensureContainerPosition();
 
-    // 🚀 核心修改：只调用 render，不在这里手动开启 monitor
-    // render 方法内部会处理 monitor 的开关，避免竞态条件
     this.render();
 
     return this;
@@ -59,17 +66,19 @@ class Watermark {
   public async render() {
     if (!this.container) return;
 
-    // 1. 暂停监控，避免修改 DOM 时自己触发自己
+    // 1. 暂停监控
     this.guard?.stop();
 
     const ratio = window.devicePixelRatio || 1;
 
     // 2. 布局计算
+    // 注意：如果 apply 里已经把 array 转成了 object，LayoutEngine.normalize 会直接透传 object
     const rootContent = LayoutEngine.normalize(this.options.content || '');
-    // 预先加载图片
+
+    console.log(rootContent);
+
     await LayoutEngine.preload(rootContent);
     const tempCtx = document.createElement('canvas').getContext('2d')!;
-    // 计算渲染的宽高
     const layoutTree = LayoutEngine.measure(tempCtx, rootContent, this.options, ratio);
 
     // 3. 生成图片
@@ -84,8 +93,8 @@ class Watermark {
         this.guard = new ObserverGuard(
           this.container,
           this.options.id!,
-          () => this.render(), // Tamper callback
-          (entry) => this._handleResize(entry), // Resize callback
+          () => this.render(),
+          (entry) => this._handleResize(entry),
         );
       }
       this.guard.start();

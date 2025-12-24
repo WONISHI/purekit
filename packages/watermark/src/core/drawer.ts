@@ -9,7 +9,7 @@ export class CanvasDrawer {
 
     const contentW = layoutTree._renderWidth;
     const contentH = layoutTree._renderHeight;
-    console.log(contentW, contentH);
+
     // 弧度 = 角度 × (π / 180)
     const angle = ((rotate || -20) * Math.PI) / 180;
 
