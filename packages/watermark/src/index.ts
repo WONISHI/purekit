@@ -1,8 +1,8 @@
-import type { WatermarkOptions } from '../types';
-import { resolveContainer, isFullScreen } from './utils/dom';
-import { LayoutEngine } from './core/layout';
-import { CanvasDrawer } from './core/drawer';
-import { ObserverGuard } from './core/guard';
+import type { WatermarkOptions } from '@/types';
+import { resolveContainer, isFullScreen } from '@/utils/dom';
+import { LayoutEngine } from '@/core/layout';
+import { CanvasDrawer } from '@/core/drawer';
+import { ObserverGuard } from '@/core/guard';
 
 class Watermark {
   private options: WatermarkOptions = {

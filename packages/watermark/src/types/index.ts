@@ -30,10 +30,15 @@ export interface WatermarkGroup extends BaseContent {
 
 export type WatermarkContent = WatermarkText | WatermarkImage | WatermarkGroup;
 
+export interface WatermarkCanvasDrawerRusult {
+  base64: string;
+  size: [number, number];
+}
+
 export interface WatermarkOptions {
   id?: string;
   el?: string | HTMLElement;
-  content?: string | WatermarkContent;
+  content?: string | string[] | WatermarkContent;
   fontSize?: number;
   fontWeight?: string | number;
   fontFamily?: string;

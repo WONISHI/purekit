@@ -1,5 +1,5 @@
-import type { WatermarkContent, WatermarkOptions, MeasuredNode, MeasuredGroup, WatermarkText, WatermarkGroup } from '../../types';
-import { imageLoader } from '../utils/image-loader';
+import type { WatermarkContent, WatermarkOptions, MeasuredNode, MeasuredGroup, WatermarkText, WatermarkGroup } from '@/types';
+import { imageLoader } from '@/utils/image-loader';
 
 export class LayoutEngine {
   /** 1. 预加载资源 (保持不变) */

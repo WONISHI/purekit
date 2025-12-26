@@ -3,14 +3,14 @@
     "target": "ES2019",
     "allowJs": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
     "declaration": true,
     "strict": true,
     "esModuleInterop": true,
-    "stripInternal":false,
+    "stripInternal": false,
     "resolveJsonModule": true,
     "typeRoots": ["node_modules/@types", "types"],
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"]
     }

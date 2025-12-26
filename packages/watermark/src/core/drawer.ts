@@ -1,5 +1,5 @@
-import type { MeasuredNode, MeasuredGroup, WatermarkOptions, WatermarkCanvasDrawerRusult } from '../../types';
-import { imageLoader } from '../utils/image-loader';
+import type { MeasuredNode, MeasuredGroup, WatermarkOptions, WatermarkCanvasDrawerRusult } from '@/types';
+import { imageLoader } from '@/utils/image-loader';
 
 export class CanvasDrawer {
   static async generate(layoutTree: MeasuredNode, options: WatermarkOptions, ratio: number): Promise<WatermarkCanvasDrawerRusult> {
