@@ -13,9 +13,6 @@ hero:
     - theme: brand
       text: '@purekit/watermark'
       link: /packages/watermark/安装.md
-    - theme: alt
-      text: '@purekit/scroll-observer'
-      link: /api-examples
 
 features:
   - title: 💧 纯净无依赖

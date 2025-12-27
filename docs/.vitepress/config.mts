@@ -11,7 +11,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       {text: 'watermark', link: '/'},
-      {text: 'scroll-observer', link: '/markdown-examples'},
+      // {text: 'scroll-observer', link: '/markdown-examples'},
     ],
 
     sidebar: {
@@ -28,16 +28,16 @@ export default defineConfig({
           }
         ],
 
-      '/packages/scroll-observer/':
-        [
-          {
-            text: '目录',
-            items: [
-              {text: '安装', link: '/packages/scroll-observer/安装'},
-              {text: 'API', link: '/packages/scroll-observer/api'}
-            ]
-          }
-        ]
+      // '/packages/scroll-observer/':
+      //   [
+      //     {
+      //       text: '目录',
+      //       items: [
+      //         {text: '安装', link: '/packages/scroll-observer/安装'},
+      //         {text: 'API', link: '/packages/scroll-observer/api'}
+      //       ]
+      //     }
+      //   ]
     },
 
     socialLinks: [{icon: 'github', link: 'https://github.com/vuejs/vitepress'}],
