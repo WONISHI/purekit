@@ -64,6 +64,15 @@ importers:
         specifier: ^2.6.3
         version: 2.6.3
 
+  packages/beam:
+    devDependencies:
+      '@purekit/rollup-config':
+        specifier: workspace:^
+        version: link:../config
+      '@purekit/tsconfig':
+        specifier: workspace:^
+        version: link:../tsconfig
+
   packages/config: {}
 
   packages/scroll-observer:
