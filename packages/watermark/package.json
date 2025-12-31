@@ -1,6 +1,6 @@
 {
   "name": "@purekit/watermark",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "A lightweight, framework-agnostic library for generating text and image watermarks on the web to protect content copyright.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

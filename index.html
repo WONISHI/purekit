@@ -1,79 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script src="./packages/watermark/dist/index.umd.js"></script>
-  <title>Document</title>
-  <script type="module">
-    // import watermark from "./packages/watermark/dist/index.mjs";
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./packages/watermark/dist/index.umd.js"></script>
+    <title>Document</title>
+    <script type="module">
+      // import watermark from "./packages/watermark/dist/index.mjs";
 
       // 此时 document.body 还是 null
       console.log('Current Body:', window, document.body);
 
-      // 调用 apply
-      const vm = Watermark.apply({
-        el: '#app',
-        layout: 'rb',
-        content: {
-          type: 'group',
-          layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
-          gap: 15, // 对应截图 layoutGap
-          items: [
-            // 左侧图片
-            {
-              type: 'text',
-              text: '内部绝密资料',
-              fontSize: 12,
-              fontColor: 'red',
-            },
-            // 右侧文字组 (自动处理换行)
-            {
+      const imageUrl = 'https://picsum.photos/40/40';
+
+      /**
+       * 核心转换函数
+       */
+      const convertImage = async (url) => {
+        try {
+          // 1. Fetch 请求获取原始数据
+          // 注意：fetch 默认会处理跨域，但前提是服务端(picsum)支持 CORS
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error('网络请求失败');
+          }
+
+          // ==========================================
+          // 方法 1: 转 Blob (最基础的二进制大对象)
+          // ==========================================
+          const blob = await response.blob();
+          console.log('✅ 1. Blob 对象:', blob);
+
+          // ==========================================
+          // 方法 2: 转 File (基于 Blob 添加文件名和最后修改时间)
+          // ==========================================
+          // 这里的 type 使用 blob.type 自动识别 (如 image/jpeg)
+          const fileName = 'downloaded-image.jpg';
+          const file = new File([blob], fileName, {
+            type: blob.type,
+            lastModified: Date.now(),
+          });
+          console.log('✅ 2. File 对象:', file);
+
+          // ==========================================
+          // 方法 3: 转 Base64 (DataURL)
+          // ==========================================
+          const base64 = await blobToBase64(blob);
+          console.log('✅ 3. Base64 字符串:', base64.substring(0, 50) + '...'); // 只打印前50个字符示意
+
+          const vm = Watermark.apply({
+            el: '#app',
+            layout: 'rb',
+            offset: [0, 50],
+            content: {
               type: 'group',
-              layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
-              gap: 5,
+              layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
+              gap: 15, // 对应截图 layoutGap
               items: [
-                {
-                  type: 'image',
-                  image: 'https://picsum.photos/40/40',
-                  width: 20,
-                  height: 20,
-                },
+                // 左侧图片
                 {
                   type: 'text',
-                  text: '严禁外传\n2023-10-01', // 这里会自动再次拆分为两行
+                  text: '内部绝密资料111',
                   fontSize: 12,
-                  fontColor: '#999',
+                  fontColor: 'red',
+                },
+                // 右侧文字组 (自动处理换行)
+                {
+                  type: 'group',
+                  layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
+                  gap: 5,
+                  items: [
+                    {
+                      type: 'image',
+                      image: base64,
+                      width: 20,
+                      height: 20,
+                    },
+                    {
+                      type: 'text',
+                      text: '严禁外传\n2023-10-01', // 这里会自动再次拆分为两行
+                      fontSize: 12,
+                      fontColor: '#999',
+                    },
+                  ],
                 },
               ],
             },
-          ],
-        },
-      });
-      // Watermark.apply(["111", "222"]);
-      const content = [
-        {
-          text: '111',
-          fontSize: '',
-          fontWeight: '',
-          fontFamily: '',
-          fontColor: '',
-          rowGap: 10,
-          rotate: 10,
-        },
-        {
-          image: '',
-          rotate: 10,
-          width: 10,
-          height: 10,
-          objectFit: '',
-          rowGap: 10,
-        },
-      ];
-      // Watermark.options = 2222;
-      console.log();
-      // vm.download();
-      // console.log("vm", vm);
+          });
+
+          console.log('vm', vm);
+
+          return { blob, file, base64 };
+        } catch (error) {
+          console.error('转换失败:', error);
+        }
+      };
+
+      /**
+       * 辅助函数：将 Blob 转换为 Base64
+       * 使用 Promise 包装 FileReader 以便使用 await
+       */
+      const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      };
+
+      // --- 执行调用 ---
+      convertImage(imageUrl);
+
+      // 调用 apply
+      // const vm = Watermark.apply({
+      //   el: '#app',
+      //   layout: 'rb',
+      //   content: {
+      //     type: 'group',
+      //     layout: 'row', // 顶层：水平布局 (对应截图 layout:'水平方向')
+      //     gap: 15, // 对应截图 layoutGap
+      //     items: [
+      //       // 左侧图片
+      //       {
+      //         type: 'text',
+      //         text: '内部绝密资料',
+      //         fontSize: 12,
+      //         fontColor: 'red',
+      //       },
+      //       // 右侧文字组 (自动处理换行)
+      //       {
+      //         type: 'group',
+      //         layout: 'column', // 内部：竖直布局 (或者直接传带 \n 的 text 也会自动变这个)
+      //         gap: 5,
+      //         items: [
+      //           {
+      //             type: 'image',
+      //             image: 'https://picsum.photos/40/40',
+      //             width: 20,
+      //             height: 20,
+      //           },
+      //           {
+      //             type: 'text',
+      //             text: '严禁外传\n2023-10-01', // 这里会自动再次拆分为两行
+      //             fontSize: 12,
+      //             fontColor: '#999',
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   },
+      // });
     </script>
     <script src="https://slow-server.com/very-large-script.js"></script>
     <script type="module">
