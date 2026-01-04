@@ -50,7 +50,6 @@ class Watermark {
       this.options.content = this.options.text;
     }
 
-    // 处理 Gap/Offset 的多态
     if (isDef(opts.gap)) this.options.gap = isArray(opts.gap) ? opts.gap : [opts.gap, opts.gap];
     if (isDef(opts.offset)) this.options.offset = isArray(opts.offset) ? opts.offset : [opts.offset, opts.offset];
 

@@ -20,6 +20,7 @@ export interface WatermarkImage extends BaseContent {
   image: WatermarkImageType;
   width?: number;
   height?: number;
+  quality?: number;
 }
 
 export interface WatermarkGroup extends BaseContent {
