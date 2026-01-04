@@ -1,5 +1,6 @@
 import type { WatermarkContent, WatermarkOptions, MeasuredNode, MeasuredGroup, WatermarkText, WatermarkGroup } from '@/types';
 import { imageLoader } from '@/utils/image-loader';
+import { isString } from '@/utils/is';
 
 export class LayoutEngine {
   /** 1. 预加载资源 (保持不变) */
@@ -33,7 +34,7 @@ export class LayoutEngine {
     }
 
     // 3. 字符串处理 (核心：包含 text 字段传进来的情况)
-    if (typeof content === 'string') {
+    if (isString(content)) {
       return this._normalizeText(content, {}, inheritedGap);
     }
 
