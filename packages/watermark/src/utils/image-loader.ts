@@ -35,7 +35,6 @@ export class ImageLoader {
    */
   public async compress(src: string | Blob | File, quality: number): Promise<HTMLImageElement> {
     // 1. 先把 raw 资源加载为一张可绘制的 Image 对象
-    // (注意：这里不能调 this.load，否则会死循环)
     const originalImage = await this._loadRawImage(src);
 
     // 如果质量要求是 1，或者图片本身无法压缩（如 svg），可以直接返回原图
