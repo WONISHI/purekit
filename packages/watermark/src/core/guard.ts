@@ -1,9 +1,11 @@
 export class ObserverGuard {
   private observer: MutationObserver | null = null;
+  private parentObserver: MutationObserver | null = null; // 新增：父节点监控
   private resizeObserver: ResizeObserver | null = null;
 
   constructor(
     private container: HTMLElement,
+    private shadowRoot: ShadowRoot | null, // 支持 Shadow DOM
     private watermarkId: string,
     private onTamper: () => void,
     private onResize: (entry: ResizeObserverEntry) => void,
@@ -12,13 +14,16 @@ export class ObserverGuard {
   start() {
     this.stop();
 
-    // 1. 防篡改监听
+    // 目标节点：如果有 Shadow DOM，则监控 Shadow Root，否则监控容器
+    const targetNode = this.shadowRoot || this.container;
+
+    // 1. 内部防篡改 (水印节点被删或属性修改)
     this.observer = new MutationObserver((mutations) => {
-      const watermarkDom = this.container.querySelector(`#${this.watermarkId}`);
+      // @ts-ignore
+      const watermarkDom = targetNode.querySelector(`#${this.watermarkId}`) || targetNode.getElementById?.(this.watermarkId);
+
       const isTampered = mutations.some((m) => {
-        // 水印被删除
         const removed = Array.from(m.removedNodes).some((n) => (n as HTMLElement).id === this.watermarkId);
-        // 水印属性被修改
         const modified = m.target === watermarkDom;
         return removed || modified;
       });
@@ -28,12 +33,21 @@ export class ObserverGuard {
       }
     });
 
-    this.observer.observe(this.container, { childList: true, attributes: true, subtree: true });
+    this.observer.observe(targetNode as Node, { childList: true, attributes: true, subtree: true });
 
-    // 2. 尺寸变化监听
+    // 2. 外部防篡改 (监控容器的父节点，防止容器本身被移除)
+    if (this.container.parentNode) {
+      this.parentObserver = new MutationObserver((mutations) => {
+        const isContainerRemoved = mutations.some((m) => Array.from(m.removedNodes).includes(this.container));
+        if (isContainerRemoved) {
+          this.onTamper();
+        }
+      });
+      this.parentObserver.observe(this.container.parentNode, { childList: true });
+    }
+
+    // 3. 尺寸监听
     this.resizeObserver = new ResizeObserver((entries) => {
-      // 如果水印被删了，Resize 不应该负责重建，由 MutationObserver 负责
-      // Resize 只负责容器大小变了的时候更新水印尺寸
       if (entries[0]) this.onResize(entries[0]);
     });
     this.resizeObserver.observe(this.container);
@@ -41,8 +55,10 @@ export class ObserverGuard {
 
   stop() {
     this.observer?.disconnect();
+    this.parentObserver?.disconnect();
     this.resizeObserver?.disconnect();
     this.observer = null;
+    this.parentObserver = null;
     this.resizeObserver = null;
   }
 }

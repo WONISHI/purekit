@@ -1,5 +1,6 @@
 export type LayoutMode = 'repeat' | 'lt' | 'rt' | 'lb' | 'rb' | 'center';
 export type ContentLayoutMode = 'row' | 'column';
+export type ContentAlign = 'start' | 'center' | 'end'; // 新增：支持 flex-start/end/center 对齐
 export type WatermarkImageType = string | Blob | File;
 
 export interface BaseContent {
@@ -25,6 +26,7 @@ export interface WatermarkImage extends BaseContent {
 export interface WatermarkGroup extends BaseContent {
   type: 'group';
   layout: ContentLayoutMode;
+  align?: ContentAlign; // 新增：组内对齐方式
   gap?: number;
   items: WatermarkContent[];
 }
@@ -32,7 +34,8 @@ export interface WatermarkGroup extends BaseContent {
 export type WatermarkContent = WatermarkText | WatermarkImage | WatermarkGroup;
 
 export interface WatermarkCanvasDrawerRusult {
-  base64: string;
+  base64: string; // 兼容旧逻辑
+  blob: Blob; // 新增：用于 URL.createObjectURL 优化
   size: [number, number];
 }
 
@@ -51,12 +54,12 @@ export interface WatermarkOptions {
   layout?: LayoutMode;
   gap?: [number, number] | number;
   offset?: [number, number] | number;
+  // 新增配置
+  useShadowDom?: boolean; // 是否启用 Shadow DOM 隔离
+  quality?: number; // 图片压缩质量 (0-1)
 }
 
-// ==========================================
 // 内部计算用的类型 (Measure 后的结果)
-// ==========================================
-
 export interface MeasuredBase {
   _renderWidth: number;
   _renderHeight: number;

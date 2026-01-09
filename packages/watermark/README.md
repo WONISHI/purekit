@@ -1,8 +1,11 @@
 # @purekit/watermark
 
-一款轻量级、高性能、支持复杂图文布局的前端水印 SDK。支持防篡改监控、多行文本、图片水印及灵活的 Flex 布局策略。
+A lightweight, high-performance frontend watermark SDK supporting complex text and image layouts. Features include tamper protection (via MutationObserver), multi-line text, image watermarks, and a flexible Flexbox-like layout strategy.
 
-## 📦 安装 (Installation)Shell# npm
+## Translations
+- [中文文档](https://github.com/WONISHI/purekit/blob/master/packages/watermark/README_zh.md)
+
+## 📦 Installation
 
 ### npm
 
@@ -16,31 +19,29 @@
   pnpm add @purekit/watermark
 ```
 
-
 ### yarn
 
 ```shell
 yarn add @purekit/watermark
 ```
 
-# 🚀 快速开始 (Quick Start)
+# 🚀 Quick Start
 
-1.基础用法
-支持直接传入字符串或数组（自动换行）。
+1. Basic Usage
+Supports passing a string or an array directly (for automatic line wrapping).
 
 ```typescript
 import Watermark from '@purekit/watermark';
 
-// 单行文本
-Watermark.apply("内部绝密资料");
+// Single line text
+Watermark.apply("Confidential Internal Data");
 
-// 多行文本（自动垂直居中排列）
-Watermark.apply(["绝密文件", "严禁外传", "2023-10-01"]);
+// Multi-line text (automatically centered vertically)
+Watermark.apply(["Top Secret", "Do Not Distribute", "2023-10-01"]);
 ```
 
-
-2. 进阶配置
-通过配置对象控制样式、旋转和间距。
+2. Advanced Configuration
+Use a configuration object to control styles, rotation, and spacing.
 
 ```js
 Watermark.apply({
@@ -52,31 +53,32 @@ Watermark.apply({
 });
 ```
 
-3. 🔥 复杂图文布局 (核心特性)
-支持类似 Flexbox 的布局系统，可无限嵌套实现图文混排。
+3. 🔥 Complex Layouts (Core Feature)
+Supports a Flexbox-like layout system that allows for infinite nesting to achieve complex mixed text and image arrangements.
+
 ```js
 Watermark.apply({
   layout: 'repeat',
-  gap: [40, 40], // 瓦片间距
+  gap: [40, 40], // Gap between watermark tiles
   content: {
     type: 'group',
-    layout: 'row', // 水平排列：左图右文
-    gap: 15,       // 内容间距
+    layout: 'row', // Horizontal layout: Image left, Text right
+    gap: 15,       // Gap between items in this group
     items: [
-      // 左侧图片
+      // Left: Image
       {
         type: 'image',
         image: 'https://example.com/logo.png',
         width: 30,
         height: 30
       },
-      // 右侧垂直文字组
+      // Right: Vertical Text Group
       {
         type: 'group',
-        layout: 'column', // 垂直排列
+        layout: 'column', // Vertical layout
         gap: 5,
         items: [
-          { type: 'text', text: '内部资料', fontSize: 16, fontWeight: 'bold' },
+          { type: 'text', text: 'Internal Data', fontSize: 16, fontWeight: 'bold' },
           { type: 'text', text: 'UID: 9527', fontSize: 12, fontColor: '#666' }
         ]
       }
@@ -84,55 +86,55 @@ Watermark.apply({
   }
 });
 ```
-📚 API 文档
-全局配置 (WatermarkOptions)
 
-| 属性 | 类型 | 默认值 | 说明 |
+📚 API Documentation
+Global Configuration (WatermarkOptions)
+
+| Property | Type | Default | Description |
 |------|------|--------|------|
-| content | `string \| any[] \| object` | — | 水印内容，支持字符串、数组或完整配置对象。 |
-| el | `string \| HTMLElement` | `document.body` | 水印挂载的容器，支持 CSS 选择器或 DOM 元素。 |
-| width | `number` | `auto` | 单个水印瓦片的宽度。 |
-| height | `number` | `auto` | 单个水印瓦片的高度。 |
-| rotate | `number` | `-20` | 水印旋转角度（单位：度）。 |
-| gap | `[number, number]` | `[100, 100]` | 水印瓦片在 X / Y 方向的间距。 |
-| offset | `[number, number]` | `[20, 20]` | 水印整体相对于容器左上角的偏移量。 |
-| layout | `'repeat' \| 'center' \| 'rb'` | `'repeat'` | 布局模式：`repeat` 平铺；`center` 居中；`rb` 右下角。 |
-| zIndex | `number` | `9999` | 水印层 DOM 的层级（z-index）。 |
-| monitor | `boolean` | `true` | 是否开启防篡改监控（`MutationObserver`）。 |
-| fontColor | `string` | `'rgba(0,0,0,0.15)'` | 全局默认字体颜色。 |
-| fontSize | `number` | `16` | 全局默认字体大小（px）。 |
+| content | `string \| any[] \| object` | — | Watermark content. Supports string, array, or a full config object. |
+| el | `string \| HTMLElement` | `document.body` | The container to mount the watermark. Supports CSS selector or DOM element. |
+| width | `number` | `auto` | Width of a single watermark tile. |
+| height | `number` | `auto` | Height of a single watermark tile. |
+| rotate | `number` | `-20` | Rotation angle (in degrees). |
+| gap | `[number, number]` | `[100, 100]` | Spacing between tiles in X / Y directions. |
+| offset | `[number, number]` | `[20, 20]` | Offset of the watermark relative to the top-left corner of the container. |
+| layout | `'repeat' \| 'center' \| 'rb'` | `'repeat'` | Layout mode: repeat (tiled), center, or rb (bottom-right). |
+| zIndex | `number` | `9999` | The CSS z-index of the watermark layer. |
+| monitor | `boolean` | `true` | Enable tamper protection (uses MutationObserver). |
+| fontColor | `string` | `'rgba(0,0,0,0.15)'` | Global default font color. |
+| fontSize | `number` | `16` | Global default font size (px). |
 
+**Content Node Structure**
 
-**内容节点结构 (Content Node)**
+When content is an object, it supports the following three node types:
 
-当 content 为对象时，支持以下三种类型节点：
+1. Text Node (type: 'text')
 
-1. 文本节点 (type: 'text')
-
-| 属性 | 说明 |
+| Property | Description |
 |------|------|
-| text | 文本内容（支持 `\n` 或 `<br>` 换行，换行后自动转为 Column Group）。 |
-| fontSize | 字体大小。 |
-| fontColor | 字体颜色。 |
-| fontWeight | 字重（`bold` / `normal`）。 |
+| text | Text content. Supports \n or <br> for line breaks (converts to a Column Group automatically). |
+| fontSize | Font size. |
+| fontColor | Font color. |
+| fontWeight | Font weight (bold / normal). |
 
-2. 图片节点 (type: 'image')
+2. Image Node (type: 'image')
 
-| 属性 | 说明 |
+| Property | Description |
 |------|------|
-| image | 图片 URL 或 Base64。 |
-| width | 图片渲染宽度。 |
-| height | 图片渲染高度。 |
+| image | Image URL or Base64 string. |
+| width | Render width of the image. |
+| height | Render height of the image. |
 
-3. 分组节点 (type: 'group')
+3. Group Node (type: 'group')
 
-| 属性 | 说明 |
+| Property | Description |
 |------|------|
-| layout | 排列方向：`row`（水平）或 `column`（垂直）。 |
-| items | 子节点数组 `Array<Node>`。 |
-| gap | 组内元素间距（子元素会自动继承该间距）。 |
+| layout | Layout direction: row (horizontal) or column (vertical). |
+| items | Array of child nodes (Array<Node>). |
+| gap | Spacing between items in the group (children inherit this gap automatically). |
 
-## ⚠️ 注意事项
-1. SSR 兼容性：在 Next.js / Nuxt.js 中使用时，请确保在 onMounted 或 useEffect 中调用，避免服务端执行 document 报错。
-2. 定位要求：如果指定 el 为某个局部容器，请确保该容器设置了 position: relative (组件会自动尝试设置，但建议显式声明)。
-3. 安全说明：前端水印主要起警示作用，无法完全防止技术手段移除。
+## ⚠️ Important Notes
+1. SSR Compatibility: When using with Next.js or Nuxt.js, ensure Watermark.apply is called inside onMounted or useEffect to avoid server-side execution errors involving document.
+2. Positioning: If you specify a specific container via el, ensure that container has position: relative set (the component will attempt to set this, but explicit declaration is recommended).
+3. Security Disclaimer: Frontend watermarks primarily serve as a deterrent. They cannot completely prevent removal via advanced technical means (e.g., manual DOM manipulation or request interception).

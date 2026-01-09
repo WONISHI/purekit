@@ -3,27 +3,15 @@ import { imageLoader } from '@/utils/image-loader';
 
 export class CanvasDrawer {
   static async generate(layoutTree: MeasuredNode, options: WatermarkOptions, ratio: number): Promise<WatermarkCanvasDrawerRusult> {
-    const { rotate, gap, layout } = options;
+    const { rotate, gap, layout, quality = 0.92 } = options;
     // @ts-ignore
     const [gx, gy] = (Array.isArray(gap) ? gap : [gap, gap] || [100, 100]).map((n) => n * ratio);
 
     const contentW = layoutTree._renderWidth;
     const contentH = layoutTree._renderHeight;
 
-    // 弧度 = 角度 × (π / 180)
     const angle = ((rotate || -20) * Math.PI) / 180;
 
-    /*
-     * 内部的矩形：
-     * 是你旋转了 angle 度的水印内容。
-     * 边长 w (contentW)
-     * 边长 h (contentH)
-     * 外部的框：
-     * 是我们需要计算的画布 canvasW 和 canvasH。
-     * 三角函数投影：当你旋转一个矩形时，它的每一条边都会在 X 轴和 Y 轴上产生一个投影。
-     * 新的总宽度 (Width) = 宽边的水平投影 ($w \times \cos\theta$) + 高边的水平投影 ($h \times \sin\theta$)
-     * 新的总高度 (Height) = 宽边的垂直投影 ($w \times \sin\theta$) + 高边的垂直投影 ($h \times \cos\theta$)
-     */
     const canvasW = Math.abs(Math.cos(angle) * contentW) + Math.abs(Math.sin(angle) * contentH) + (layout === 'repeat' ? gx : 0);
     const canvasH = Math.abs(Math.sin(angle) * contentW) + Math.abs(Math.cos(angle) * contentH) + (layout === 'repeat' ? gy : 0);
 
@@ -39,13 +27,28 @@ export class CanvasDrawer {
 
     await this._drawRecursive(ctx, layoutTree);
 
-    return { base64: canvas.toDataURL(), size: [canvasW / ratio, canvasH / ratio] };
+    // 优化：同时返回 Blob 和 Base64
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          resolve({
+            base64: canvas.toDataURL('image/png', quality),
+            blob: blob!,
+            size: [canvasW / ratio, canvasH / ratio],
+          });
+        },
+        'image/png',
+        quality,
+      );
+    });
   }
 
+  /**
+   * 核心：支持 Group 内的对齐 (align)
+   */
   private static async _drawRecursive(ctx: CanvasRenderingContext2D, node: MeasuredNode | MeasuredGroup, x = 0, y = 0) {
     ctx.save();
 
-    // 处理局部旋转
     const centerX = x + node._renderWidth / 2;
     const centerY = y + node._renderHeight / 2;
     if (node.rotate) {
@@ -60,23 +63,29 @@ export class CanvasDrawer {
       ctx.textBaseline = 'top';
       ctx.fillText(node.text, x, y + (node._renderHeight - parseInt(ctx.font)) / 2 + 2);
     } else if (node.type === 'image') {
-      // 从缓存取图片
       const img = await imageLoader.load(node.image);
       ctx.drawImage(img, x, y, node._renderWidth, node._renderHeight);
     } else if (node.type === 'group') {
       let currentX = x;
       let currentY = y;
       const isRow = node.layout === 'row';
+      const align = node.align || 'center'; // 默认居中
 
       for (const item of node.items) {
         let itemX = currentX;
         let itemY = currentY;
 
-        // Flex 居中对齐逻辑
+        // 优化布局对齐逻辑
         if (isRow) {
-          itemY = y + (node._renderHeight - item._renderHeight) / 2;
+          // 水平排列时，处理垂直对齐
+          if (align === 'center') itemY = y + (node._renderHeight - item._renderHeight) / 2;
+          else if (align === 'end') itemY = y + (node._renderHeight - item._renderHeight);
+          // start 默认为 y
         } else {
-          itemX = x + (node._renderWidth - item._renderWidth) / 2;
+          // 垂直排列时，处理水平对齐
+          if (align === 'center') itemX = x + (node._renderWidth - item._renderWidth) / 2;
+          else if (align === 'end') itemX = x + (node._renderWidth - item._renderWidth);
+          // start 默认为 x
         }
 
         await this._drawRecursive(ctx, item, itemX, itemY);
