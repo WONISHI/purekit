@@ -1,5 +1,7 @@
+import { isString } from '@/utils/is';
+
 export function resolveContainer(el?: string | HTMLElement): HTMLElement {
-  const target = typeof el === 'string' ? document.querySelector(el) : el;
+  const target = isString(el) ? document.querySelector(el) : el;
   return (target || document.body || document.documentElement) as HTMLElement;
 }
 

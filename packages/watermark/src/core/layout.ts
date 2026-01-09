@@ -1,11 +1,12 @@
 import type { WatermarkContent, WatermarkOptions, MeasuredNode, MeasuredGroup, WatermarkText, WatermarkGroup } from '@/types';
 import { imageLoader } from '@/utils/image-loader';
+import { isString, isArray } from '@/utils/is';
 
 export class LayoutEngine {
   /** 1. 预加载资源 (保持不变) */
   static async preload(node: WatermarkContent): Promise<void> {
     if (node.type === 'image') {
-      await imageLoader.load(node.image);
+      await imageLoader.load(node.image, Math.min(1, Math.max(0, node.quality || 0.6)));
     } else if (node.type === 'group') {
       await Promise.all(node.items.map((item) => this.preload(item)));
     }
@@ -17,13 +18,10 @@ export class LayoutEngine {
    * @param inheritedGap 从父级继承下来的 gap (专门用于给自动拆分的文本组使用)
    */
   static normalize(content: string | string[] | WatermarkContent | undefined, inheritedGap: number = 0): WatermarkContent {
-    // 1. 空值处理
     if (!content) {
       return { type: 'text', text: '' };
     }
-
-    // 2. 数组处理 (options.content 为数组的情况)
-    if (Array.isArray(content)) {
+    if (isArray(content)) {
       return {
         type: 'group',
         layout: 'column',
@@ -31,13 +29,9 @@ export class LayoutEngine {
         items: content.map((item) => this.normalize(item, inheritedGap)),
       };
     }
-
-    // 3. 字符串处理 (核心：包含 text 字段传进来的情况)
-    if (typeof content === 'string') {
+    if (isString(content)) {
       return this._normalizeText(content, {}, inheritedGap);
     }
-
-    // 4. 对象处理
     if (content.type === 'text') {
       // 这里的 content.text 也是字符串，同样需要检查是否含有换行符
       return this._normalizeText(content.text, content, inheritedGap);
@@ -64,12 +58,10 @@ export class LayoutEngine {
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/\r\n/g, '\n');
 
-    // Case A: 没有换行符，直接返回文本节点
     if (!rawText.includes('\n')) {
       return { type: 'text', ...style, text: rawText } as WatermarkText;
     }
 
-    // Case B: 有换行符，拆分为 Group
     const lines = rawText.split('\n');
 
     return {
@@ -78,14 +70,15 @@ export class LayoutEngine {
       gap: parentGap, // 沿用父级的 gap
       items: lines.map((line) => ({
         type: 'text',
-        ...style, // 继承原有样式 (color, font 等)
+        ...style,
         text: line,
       })),
     } as WatermarkGroup;
   }
 
+  // 获取行列的间隙
   private static _resolveGap(gap?: number | [number, number]): number {
-    if (Array.isArray(gap)) return gap[0];
+    if (isArray(gap)) return gap[0];
     return gap || 0;
   }
 
