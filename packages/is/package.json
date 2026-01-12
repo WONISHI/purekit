@@ -16,5 +16,9 @@
   "private": false,
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@purekit/rollup-config": "workspace:^",
+    "@purekit/tsconfig": "workspace:^"
   }
 }
