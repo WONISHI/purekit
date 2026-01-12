@@ -6,6 +6,8 @@ import { LayoutEngine } from '@/core/layout';
 import { CanvasDrawer } from '@/core/drawer';
 import { ElementObserver } from '@purekit/observer-guard';
 
+// ElementGuard、ObserverGuard、VisibilityGuard
+
 class Watermark {
   private options: WatermarkOptions = {
     id: 'watermark-layer',
