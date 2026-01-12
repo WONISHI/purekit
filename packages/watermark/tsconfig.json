@@ -2,6 +2,7 @@
   "extends": "@purekit/tsconfig/base",
   "ignoreDeprecations": "5.0",
   "compilerOptions": {
+    "target": "esnext",
     "outDir": "dist",
     "isolatedModules": true,
     "moduleResolution": "bundler",

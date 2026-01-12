@@ -28,6 +28,9 @@ export interface ElementObserverOptions {
   /** DOM 结构或属性发生变化 */
   onMutate?: ElementMutationCallback;
 
+  /** 子元素属性变化*/
+  onChildMutate?: ElementMutationCallback;
+
   /** 容器尺寸变化 */
   onResize?: ElementResizeCallback;
 

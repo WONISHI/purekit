@@ -1,4 +1,4 @@
-import type { ElementNode, ElementObserverOptions } from '../types/index';
+import type { ElementNode, ElementObserverOptions } from '@/types';
 /**
  * ObserverGuard 配置项：
  * @param {Array<string|HTMLElement>} children - 需要监听尺寸变化的子元素
@@ -7,7 +7,8 @@ import type { ElementNode, ElementObserverOptions } from '../types/index';
  * @param {boolean} watchSubtree - 是否监听容器子树
  * @param {boolean} preventMutationOnResize - 当容器尺寸变化触发 ResizeObserver 时，是否阻止 MutationObserver
  * @param {boolean} preventChildResizeMutation - 当子元素尺寸变化时，是否阻止 MutationObserver
- * @param {function(MutationRecord): void} onMutate - 子节点或属性变化回调
+ * @param {function(MutationRecord): void} onMutate - 容器或属性变化回调
+ * @param {function(MutationRecord): void} onChildMutate - 子节点或属性变化回调
  * @param {function(ResizeObserverEntry): void} onResize - 容器尺寸变化回调
  * @param {function(ResizeObserverEntry): void} onChildResize - 子元素尺寸变化回调
  */
@@ -20,11 +21,13 @@ export class ElementObserver {
   private _lastChildRects: Map<HTMLElement, { width: number; height: number }> = new Map();
 
   private containerTarget: ElementNode;
-  private options: ElementObserverOptions;
+  private options: Partial<ElementObserverOptions>;
 
-  constructor(container: ElementNode, options: ElementObserverOptions = {}) {
+  constructor(container: ElementNode, options: Partial<ElementObserverOptions> = {}) {
     this.containerTarget = container;
     this.options = options;
+    // 当页面被卸载或者关闭自动关闭监听
+    window.addEventListener('beforeunload', this.stop);
   }
 
   private resolveElement(target: ElementNode): HTMLElement | null {
@@ -52,16 +55,15 @@ export class ElementObserver {
       preventMutationOnResize,
       preventChildResizeMutation,
       onMutate,
+      onChildMutate,
       onResize,
       onChildResize,
       children,
     } = this.options;
 
-    // ---------- 初始容器尺寸 ----------
     const rect = container.getBoundingClientRect();
     this._lastContainerRect = { width: rect.width, height: rect.height };
 
-    // ---------- ResizeObserver for container ----------
     if (onResize) {
       this.resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
         for (const entry of entries) {
@@ -76,7 +78,6 @@ export class ElementObserver {
       this.resizeObserver.observe(container);
     }
 
-    // ---------- ResizeObserver for children ----------
     const childrenEls: HTMLElement[] = [];
 
     if (children && onChildResize) {
@@ -107,35 +108,48 @@ export class ElementObserver {
       });
     }
 
-    // ---------- MutationObserver ----------
+    // 当尺寸发生变化的时候是先触发MutationObserver然后才触发ResizeObserver
+    /**
+     *  监听子节点增删
+     *  watchChildNodes?: boolean;
+     *
+     *  监听容器自身 attributes 变化
+     *  watchContainerAttributes?: boolean;
+     *
+     *  是否递归监听子树
+     *  watchSubtree?: boolean;
+     */
     if (watchChildNodes || watchContainerAttributes || watchSubtree) {
-      this.mutationObserver = new MutationObserver((mutations: MutationRecord[]) => {
+      this.mutationObserver = new MutationObserver((mutations) => {
         for (const m of mutations) {
-          // 容器 resize 时过滤 style 变更
-          if (preventMutationOnResize && m.type === 'attributes' && m.attributeName === 'style') {
-            const { width, height } = container.getBoundingClientRect();
-            const last = this._lastContainerRect;
-            if (last && (width !== last.width || height !== last.height)) {
-              continue;
+          const target = m.target;
+          // 容器元素
+          if (target === container) {
+            if (preventMutationOnResize && m.type === 'attributes' && m.attributeName === 'style') {
+              const { width, height } = container.getBoundingClientRect();
+              const last = this._lastContainerRect;
+              if (last && (width !== last.width || height !== last.height)) {
+                continue;
+              }
             }
+            onMutate?.(m);
+            continue;
           }
-
-          // 子元素 resize 过滤
-          if (
-            preventChildResizeMutation &&
-            m.type === 'attributes' &&
-            m.attributeName === 'style' &&
-            m.target instanceof HTMLElement &&
-            childrenEls.includes(m.target)
-          ) {
-            const rect = m.target.getBoundingClientRect();
-            const lastRect = this._lastChildRects.get(m.target);
-            if (lastRect && (rect.width !== lastRect.width || rect.height !== lastRect.height)) {
-              continue;
+          // 子节点
+          if (target instanceof HTMLElement && childrenEls.includes(target)) {
+            if (preventChildResizeMutation && m.type === 'attributes' && m.attributeName === 'style') {
+              const rect = target.getBoundingClientRect();
+              const lastRect = this._lastChildRects.get(target);
+              if (lastRect && (rect.width !== lastRect.width || rect.height !== lastRect.height)) {
+                continue;
+              }
             }
+            onChildMutate?.(m);
+            continue;
           }
-
-          onMutate?.(m);
+          if (watchSubtree) {
+            onChildMutate?.(m);
+          }
         }
       });
 

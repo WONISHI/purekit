@@ -3,7 +3,6 @@ import { resolveContainer, isFullScreen } from '@/utils/dom';
 import { isDef, isObject, isString, isArray } from '@purekit/is';
 import { LayoutEngine } from '@/core/layout';
 import { CanvasDrawer } from '@/core/drawer';
-import { ObserverGuard } from '@/core/guard';
 import { ElementObserver } from '@purekit/observer-guard';
 
 class Watermark {
@@ -23,7 +22,7 @@ class Watermark {
   };
 
   private container: HTMLElement | null = null;
-  private guard: ObserverGuard | null = null;
+  #guard: ElementObserver | null = null;
 
   /**
    * 初始化/应用水印
@@ -31,7 +30,6 @@ class Watermark {
    */
   public apply(arg1?: string | string[] | WatermarkOptions, arg2?: HTMLElement | string): this {
     if (document.readyState === 'loading' && !document.body) {
-      // @ts-ignore: 参数透传
       document.addEventListener('DOMContentLoaded', () => this.apply(arg1, arg2));
       return this;
     }
@@ -66,7 +64,7 @@ class Watermark {
     if (!this.container) return;
 
     // 1. 暂停监控
-    this.guard?.stop();
+    this.#guard?.stop();
 
     const ratio = window.devicePixelRatio || 1;
 
@@ -86,15 +84,21 @@ class Watermark {
 
     // 5. 恢复监控
     if (this.options.monitor) {
-      if (!this.guard) {
-        this.guard = new ObserverGuard(
-          this.container,
-          this.options.id!,
-          () => this.render(),
-          (entry) => this._handleResize(entry),
-        );
+      if (!this.#guard) {
+        this.#guard = new ElementObserver(this.container, {
+          children: [this.options.id!],
+          watchChildNodes: true,
+          watchContainerAttributes: true,
+          watchSubtree: false,
+          preventMutationOnResize: false,
+          preventChildResizeMutation: false,
+          // 监听容器属性组件变化
+          onMutate: (e) => this._ensureContainerPosition(),
+          // 监听子节点的属性变化
+          onChildMutate: () => this.render(),
+        });
       }
-      this.guard.start();
+      this.#guard.start();
     }
   }
 
@@ -162,11 +166,17 @@ class Watermark {
     // if (el.style.height !== `${height}px`) el.style.height = `${height}px`;
   }
 
+  // 为父元素定位兜底
   private _ensureContainerPosition() {
     if (!this.container || isFullScreen(this.container)) return;
-    if (window.getComputedStyle(this.container).position === 'static') {
-      this.container.style.position = 'relative';
+    const style = window.getComputedStyle(this.container);
+    if (['relative', 'absolute', 'fixed', 'sticky'].includes(style.position)) {
+      return;
     }
+    if (style.transform !== 'none') return;
+    if (style.contain && style.contain !== 'none') return;
+
+    this.container.style.cssText += '; contain: paint;';
   }
 }
 
