@@ -1,4 +1,4 @@
-import { isString } from '@/utils/is';
+import { isString } from '@purekit/is';
 
 export function resolveContainer(el?: string | HTMLElement): HTMLElement {
   const target = isString(el) ? document.querySelector(el) : el;

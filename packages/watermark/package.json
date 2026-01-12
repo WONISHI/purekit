@@ -41,6 +41,7 @@
   "devDependencies": {
     "@purekit/rollup-config": "workspace:^",
     "@purekit/tsconfig": "workspace:^",
-    "@purekit/observer-guard": "workspace:^"
+    "@purekit/observer-guard": "workspace:^",
+    "@purekit/is": "workspace:^"
   }
 }

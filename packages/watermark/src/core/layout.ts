@@ -1,6 +1,6 @@
 import type { WatermarkContent, WatermarkOptions, MeasuredNode, MeasuredGroup, WatermarkText, WatermarkGroup } from '@/types';
 import { imageLoader } from '@/utils/image-loader';
-import { isString, isArray } from '@/utils/is';
+import { isString, isArray } from '@purekit/is';
 
 export class LayoutEngine {
   /** 1. 预加载资源 (保持不变) */

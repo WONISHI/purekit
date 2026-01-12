@@ -1,6 +1,6 @@
 import type { WatermarkOptions } from '@/types';
 import { resolveContainer, isFullScreen } from '@/utils/dom';
-import { isDef, isObject, isString, isArray } from '@/utils/is';
+import { isDef, isObject, isString, isArray } from '@purekit/is';
 import { LayoutEngine } from '@/core/layout';
 import { CanvasDrawer } from '@/core/drawer';
 import { ObserverGuard } from '@/core/guard';

@@ -1,4 +1,4 @@
-import { isString, isDef } from '@/utils/is';
+import { isString, isDef } from '@purekit/is';
 
 export class ImageLoader {
   // Key 建议改为： "URL_Quality" 格式，防止不同质量的请求命中同一个缓存

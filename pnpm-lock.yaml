@@ -115,6 +115,9 @@ importers:
 
   packages/watermark:
     devDependencies:
+      '@purekit/is':
+        specifier: workspace:^
+        version: link:../is
       '@purekit/observer-guard':
         specifier: workspace:^
         version: link:../observer-guard
