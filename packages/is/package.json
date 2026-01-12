@@ -1,0 +1,20 @@
+{
+  "name": "@purekit/is",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs -w",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "sideEffects": false,
+  "author": "WONSHI",
+  "license": "ISC",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}

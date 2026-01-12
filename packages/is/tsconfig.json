@@ -1,0 +1,13 @@
+{
+  "extends": "@purekit/tsconfig/base",
+  "ignoreDeprecations": "5.0",
+  "compilerOptions": {
+    "outDir": "dist",
+    "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "types/**/*"]
+}

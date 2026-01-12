@@ -4,6 +4,7 @@ import { isDef, isObject, isString, isArray } from '@/utils/is';
 import { LayoutEngine } from '@/core/layout';
 import { CanvasDrawer } from '@/core/drawer';
 import { ObserverGuard } from '@/core/guard';
+import { ElementObserver } from '@purekit/observer-guard';
 
 class Watermark {
   private options: WatermarkOptions = {

@@ -106,6 +106,9 @@ importers:
 
   packages/watermark:
     devDependencies:
+      '@purekit/observer-guard':
+        specifier: workspace:^
+        version: link:../observer-guard
       '@purekit/rollup-config':
         specifier: workspace:^
         version: link:../config
