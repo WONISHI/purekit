@@ -84,6 +84,15 @@ importers:
 
   packages/config: {}
 
+  packages/observer-guard:
+    devDependencies:
+      '@purekit/rollup-config':
+        specifier: workspace:^
+        version: link:../config
+      '@purekit/tsconfig':
+        specifier: workspace:^
+        version: link:../tsconfig
+
   packages/scroll-observer:
     devDependencies:
       '@purekit/rollup-config':

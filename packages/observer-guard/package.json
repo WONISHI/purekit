@@ -1,0 +1,21 @@
+{
+  "name": "@purekit/observer-guard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "sideEffects": false,
+  "author": "WONSHI",
+  "license": "ISC",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@purekit/rollup-config": "workspace:^",
+    "@purekit/tsconfig": "workspace:^"
+  }
+}

@@ -114,7 +114,6 @@ class Watermark {
 
     // 尺寸策略
     // 全屏：fixed + 100vw/vh
-    console.dir(this.container);
     const widthVal = isBody ? '100vw' : '100%';
     const heightVal = isBody ? '100vh' : '100%';
     const positionVal = isBody ? 'fixed' : 'absolute';
@@ -150,19 +149,16 @@ class Watermark {
   }
 
   private _handleResize(entry: ResizeObserverEntry) {
-    console.log('触发了吗');
     if (!this.container || isFullScreen(this.container)) return;
-
     // 仅处理局部容器的尺寸变大
     const el = this.container.querySelector(`#${this.options.id}`) as HTMLElement;
     if (!el) return;
-
     const { scrollWidth, scrollHeight, clientWidth, clientHeight } = entry.target;
     const width = Math.max(scrollWidth, clientWidth);
     const height = Math.max(scrollHeight, clientHeight);
 
-    if (el.style.width !== `${width}px`) el.style.width = `${width}px`;
-    if (el.style.height !== `${height}px`) el.style.height = `${height}px`;
+    // if (el.style.width !== `${width}px`) el.style.width = `${width}px`;
+    // if (el.style.height !== `${height}px`) el.style.height = `${height}px`;
   }
 
   private _ensureContainerPosition() {

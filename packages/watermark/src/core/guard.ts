@@ -6,7 +6,7 @@ export class ObserverGuard {
     private container: HTMLElement,
     private watermarkId: string,
     private onTamper: () => void,
-    private onResize: (entry: ResizeObserverEntry) => void,
+    private onResize?: (entry: ResizeObserverEntry) => void,
   ) {}
 
   start() {
@@ -34,7 +34,7 @@ export class ObserverGuard {
     this.resizeObserver = new ResizeObserver((entries) => {
       // 如果水印被删了，Resize 不应该负责重建，由 MutationObserver 负责
       // Resize 只负责容器大小变了的时候更新水印尺寸
-      if (entries[0]) this.onResize(entries[0]);
+      if (entries[0] && this.onResize) this.onResize(entries[0]);
     });
     this.resizeObserver.observe(this.container);
   }
