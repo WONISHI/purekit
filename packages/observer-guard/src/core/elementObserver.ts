@@ -27,7 +27,7 @@ export class ElementObserver {
     this.containerTarget = container;
     this.options = options;
     // 当页面被卸载或者关闭自动关闭监听
-    window.addEventListener('beforeunload', this.stop);
+    window.addEventListener('beforeunload', () => this.stop());
   }
 
   private resolveElement(target: ElementNode): HTMLElement | null {
@@ -43,7 +43,7 @@ export class ElementObserver {
   }
 
   start(): void {
-    this.stop();
+    this.stop?.();
 
     const container = this.resolveElement(this.containerTarget);
     if (!container) return;
@@ -80,31 +80,30 @@ export class ElementObserver {
 
     const childrenEls: HTMLElement[] = [];
 
-    if (children && onChildResize) {
+    if (children) {
       children.forEach((child) => {
         const childEl = this.resolveElement(child);
         if (!childEl) return;
-
         childrenEls.push(childEl);
+        if (onChildResize) {
+          const rect = childEl.getBoundingClientRect();
+          this._lastChildRects.set(childEl, { width: rect.width, height: rect.height });
 
-        const rect = childEl.getBoundingClientRect();
-        this._lastChildRects.set(childEl, { width: rect.width, height: rect.height });
+          const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+            for (const entry of entries) {
+              const target = entry.target as HTMLElement;
+              const { width, height } = entry.contentRect;
+              const lastRect = this._lastChildRects.get(target);
 
-        const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-          for (const entry of entries) {
-            const target = entry.target as HTMLElement;
-            const { width, height } = entry.contentRect;
-            const lastRect = this._lastChildRects.get(target);
-
-            if (!lastRect || width !== lastRect.width || height !== lastRect.height) {
-              this._lastChildRects.set(target, { width, height });
-              onChildResize(entry);
+              if (!lastRect || width !== lastRect.width || height !== lastRect.height) {
+                this._lastChildRects.set(target, { width, height });
+                onChildResize(entry);
+              }
             }
-          }
-        });
-
-        ro.observe(childEl);
-        this.childResizeObservers.set(childEl, ro);
+          });
+          ro.observe(childEl);
+          this.childResizeObservers.set(childEl, ro);
+        }
       });
     }
 

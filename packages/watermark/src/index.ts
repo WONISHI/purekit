@@ -1,5 +1,6 @@
 import type { WatermarkOptions } from '@/types';
 import { resolveContainer, isFullScreen } from '@/utils/dom';
+import { imageLoader } from '@/utils/image-loader';
 import { isDef, isObject, isString, isArray } from '@purekit/is';
 import { LayoutEngine } from '@/core/layout';
 import { CanvasDrawer } from '@/core/drawer';
@@ -124,14 +125,14 @@ class Watermark {
     const positionVal = isBody ? 'fixed' : 'absolute';
 
     el.style.cssText = `
-      position: ${positionVal};
-      top: 0; left: 0;
-      width: ${widthVal};
-      height: ${heightVal};
-      pointer-events: none;
-      z-index: ${zIndex};
-      display: block;
-      visibility: visible;
+      position: ${positionVal} !important;
+      top: 0 !important; left: 0!important;
+      width: ${widthVal} !important;
+      height: ${heightVal} !important;
+      pointer-events: none !important;
+      z-index: ${zIndex} !important;
+      display: block !important;
+      visibility: visible !important;
     `;
 
     // 背景设置
@@ -145,12 +146,10 @@ class Watermark {
     };
     const isRepeat = layout === 'repeat';
 
-    Object.assign(el.style, {
-      backgroundImage: `url(${base64})`,
-      backgroundSize: `${size[0]}px ${size[1]}px`,
-      backgroundRepeat: isRepeat ? 'repeat' : 'no-repeat',
-      backgroundPosition: isRepeat ? '0 0' : posMap[layout!] || 'center',
-    });
+    el.style.setProperty('background-image', `url(${base64})`, 'important');
+    el.style.setProperty('background-size', `${size[0]}px ${size[1]}px`, 'important');
+    el.style.setProperty('background-repeat', isRepeat ? 'repeat' : 'no-repeat', 'important');
+    el.style.setProperty('background-position', isRepeat ? '0 0' : posMap[layout!] || 'center', 'important');
   }
 
   private _handleResize(entry: ResizeObserverEntry) {
@@ -177,6 +176,14 @@ class Watermark {
     if (style.contain && style.contain !== 'none') return;
 
     this.container.style.cssText += '; contain: paint;';
+  }
+
+  // 增加cover方法
+  public cover() {}
+
+  // 将质量的方法
+  public loadCompress(src: string | Blob | File, quality: number): Promise<HTMLImageElement> {
+    return imageLoader.compress(src, quality);
   }
 }
 

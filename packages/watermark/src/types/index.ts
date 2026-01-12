@@ -23,6 +23,14 @@ export interface WatermarkImage extends BaseContent {
   quality?: number;
 }
 
+export interface WatermarkRichText extends BaseContent {
+  type: 'rich-text';
+  raw: string;
+  width?: number;
+  height?: number;
+  cssText?: string;
+}
+
 export interface WatermarkGroup extends BaseContent {
   type: 'group';
   layout: ContentLayoutMode;
@@ -30,7 +38,7 @@ export interface WatermarkGroup extends BaseContent {
   items: WatermarkContent[];
 }
 
-export type WatermarkContent = WatermarkText | WatermarkImage | WatermarkGroup;
+export type WatermarkContent = WatermarkText | WatermarkImage | WatermarkRichText | WatermarkGroup;
 
 export interface WatermarkCanvasDrawerRusult {
   base64: string;
