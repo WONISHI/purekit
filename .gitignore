@@ -8,7 +8,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-.npmrc
 
 # =========================
 # 🚀 TurboRepo 缓存 (必填)
